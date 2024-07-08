@@ -8,12 +8,14 @@ import com.suman.blogz.payloads.dto.MyUserDto;
 import com.suman.blogz.payloads.dto.PostDto;
 import com.suman.blogz.payloads.request.PostRequestData;
 import com.suman.blogz.payloads.response.ApiResponse;
+import com.suman.blogz.payloads.response.CommentResponse;
 import com.suman.blogz.payloads.response.PostResponse;
 import com.suman.blogz.repository.PostRepository;
 import com.suman.blogz.exceptions.ResourceNotFoundException;
 import com.suman.blogz.services.CategoryService;
 import com.suman.blogz.services.PostService;
 import com.suman.blogz.services.MyUserService;
+import com.suman.blogz.utils.GenericMapper;
 import com.suman.blogz.utils.SortUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -41,12 +44,24 @@ public class PostServiceImpl implements PostService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private GenericMapper genericMapper;
+
+
+    private PostDto convertToPostDto(Posts post) {
+        PostDto postDto = modelMapper.map(post, PostDto.class);
+        Set<CommentResponse> commentResponses = genericMapper.mapSet(post.getComments(), CommentResponse.class);
+        postDto.setCommentsForThisPost(commentResponses);
+        return postDto;
+    }
+
     public PostResponse createPostResponse(Page<Posts> pageOfPosts) {
         PostResponse postResponse = new PostResponse();
         List<Posts> postsFromDb = pageOfPosts.getContent();
         if(postsFromDb.isEmpty())
             throw new ResourceNotFoundException("No posts found.");
-        List<PostDto> allPostDtos = postsFromDb.stream().map(post -> modelMapper.map(post, PostDto.class)).toList();
+        List<PostDto> allPostDtos = postsFromDb.stream().map(this::convertToPostDto).toList();
+
         postResponse.setContent(allPostDtos);
         postResponse.setPageNumber(pageOfPosts.getNumber());
         postResponse.setPageSize(pageOfPosts.getSize());

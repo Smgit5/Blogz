@@ -1,15 +1,16 @@
 package com.suman.blogz.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Posts {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,13 +23,11 @@ public class Posts {
     @Column(length = 1000, nullable = false)
     private String postBody;
 
-
-
     @Column(nullable = false)
     private Date postDate;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private List<Comments> comments;
+    private Set<Comments> comments = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)

@@ -78,7 +78,7 @@ public class PostController {
     }
 
     // Search post
-    @GetMapping("/search")
+    @GetMapping("/show-posts/search")
     public ResponseEntity<PostResponse> searchPost(@RequestParam(value = "searchKey", required = false) String searchKey,
                                                    @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
                                                    @RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,

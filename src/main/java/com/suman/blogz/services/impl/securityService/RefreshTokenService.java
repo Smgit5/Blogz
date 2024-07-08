@@ -34,6 +34,11 @@ public class RefreshTokenService {
                 .myUser(myUser)
                 .build();
 
+        Optional<RefreshToken> existingRefreshToken = refreshTokenRepository.findByMyUser(myUser);
+        if(existingRefreshToken.isPresent()) {
+            refreshToken.setTokenId(existingRefreshToken.get().getTokenId());
+            return refreshTokenRepository.save(refreshToken);
+        }
         return refreshTokenRepository.save(refreshToken);
     }
 

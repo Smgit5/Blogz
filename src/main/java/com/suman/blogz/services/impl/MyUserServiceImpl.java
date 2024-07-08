@@ -9,6 +9,7 @@ import com.suman.blogz.payloads.response.ApiResponse;
 import com.suman.blogz.payloads.dto.MyUserDto;
 import com.suman.blogz.payloads.UserProfile;
 import com.suman.blogz.services.MyUserService;
+import com.suman.blogz.utils.GenericMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,6 +27,8 @@ public class MyUserServiceImpl implements MyUserService {
     private ModelMapper modelMapper;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private GenericMapper genericMapper;
 
     @Override
     public ApiResponse updateUserProfile(Integer userId, UserProfile userProfile) {
@@ -72,7 +75,7 @@ public class MyUserServiceImpl implements MyUserService {
     @Override
     public List<MyUserDto> getAllUsersForAdmin() {
         List<MyUser> userListFromDb = myUserRepository.findAll();
-        List<MyUserDto> myUserDtoList = userListFromDb.stream().map(user -> modelMapper.map(user, MyUserDto.class)).toList();
+        List<MyUserDto> myUserDtoList = genericMapper.mapList(userListFromDb, MyUserDto.class);
         return myUserDtoList;
     }
 

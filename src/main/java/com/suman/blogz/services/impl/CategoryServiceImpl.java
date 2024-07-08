@@ -6,6 +6,7 @@ import com.suman.blogz.exceptions.ResourceNotFoundException;
 import com.suman.blogz.payloads.response.ApiResponse;
 import com.suman.blogz.payloads.dto.CategoryDto;
 import com.suman.blogz.services.CategoryService;
+import com.suman.blogz.utils.GenericMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,8 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryRepository categoryRepository;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private GenericMapper genericMapper;
     @Override
     public ApiResponse createCategory(Category newCategory) {
         categoryRepository.save(newCategory);
@@ -43,7 +46,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDto> getAllCategories() {
-        return categoryRepository.findAll().stream().map(c -> modelMapper.map(c, CategoryDto.class)).toList();
+        return genericMapper.mapList(categoryRepository.findAll(), CategoryDto.class);
     }
 
     @Override

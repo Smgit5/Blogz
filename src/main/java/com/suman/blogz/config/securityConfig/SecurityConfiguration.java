@@ -38,7 +38,7 @@ public class SecurityConfiguration {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable).cors(CorsConfigurer::disable)
                 .authorizeHttpRequests(registry -> registry
-                        .requestMatchers("/blogz/register", "/blogz/auth/login", "/blogz/auth/refresh-token", "/blogz/posts/show-posts/**", "/blogz/posts/search/**").permitAll()
+                        .requestMatchers("/blogz/register", "/blogz/auth/login", "/blogz/auth/refresh-token", "/blogz/posts/show-posts/**", "/blogz/posts/show-posts/search/**").permitAll()
 //                        .requestMatchers("/blogz/normal-user/**").hasAnyRole(AppConstants.ROLE_USER, AppConstants.ROLE_ADMIN)
                         .requestMatchers("/blogz/admin/**").hasAuthority(AppConstants.ROLE_ADMIN)
                         .anyRequest().authenticated()
