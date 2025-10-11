@@ -5,12 +5,14 @@ import com.suman.blogz.payloads.response.ApiResponse;
 import com.suman.blogz.payloads.dto.PostDto;
 import com.suman.blogz.payloads.request.PostRequestData;
 import com.suman.blogz.payloads.response.PostResponse;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface PostService {
     // Create a post
-    ApiResponse createPost(PostRequestData newPost, Integer userId, int categoryId);
+    ApiResponse createPost(MultipartFile image, PostRequestData postRequestData, Integer userId, int categoryId) throws IOException;
 
     // Update a post by id
     ApiResponse updatePost(Integer postId, Posts updatedPost);

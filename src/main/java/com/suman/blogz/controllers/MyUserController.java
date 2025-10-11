@@ -1,12 +1,9 @@
 package com.suman.blogz.controllers;
 
-import com.suman.blogz.payloads.request.RefreshTokenRequest;
 import com.suman.blogz.payloads.response.ApiResponse;
 import com.suman.blogz.payloads.dto.MyUserDto;
 import com.suman.blogz.payloads.UserProfile;
-import com.suman.blogz.payloads.response.JwtResponse;
 import com.suman.blogz.services.MyUserService;
-import com.suman.blogz.services.impl.securityService.RefreshTokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +15,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/blogz")
-public class UserController {
+public class MyUserController {
     @Autowired
     private MyUserService myUserService;
 

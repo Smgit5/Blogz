@@ -1,5 +1,6 @@
 package com.suman.blogz.entities;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,6 +26,10 @@ public class Posts {
 
     @Column(nullable = false)
     private Date postDate;
+
+    // image is optional
+    @Column(nullable = true)
+    private String image;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private Set<Comments> comments = new HashSet<>();

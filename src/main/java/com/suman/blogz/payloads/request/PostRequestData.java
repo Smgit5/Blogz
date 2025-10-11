@@ -9,6 +9,10 @@ import lombok.Setter;
 public class PostRequestData {
     @NotBlank
     private String postTitle;
+
     @NotBlank
     private String postBody;
+
+    // image is optional
+    private String originalImageName;
 }

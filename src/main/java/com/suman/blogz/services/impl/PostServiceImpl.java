@@ -13,24 +13,37 @@ import com.suman.blogz.payloads.response.PostResponse;
 import com.suman.blogz.repository.PostRepository;
 import com.suman.blogz.exceptions.ResourceNotFoundException;
 import com.suman.blogz.services.CategoryService;
+import com.suman.blogz.services.FileService;
 import com.suman.blogz.services.PostService;
 import com.suman.blogz.services.MyUserService;
 import com.suman.blogz.utils.GenericMapper;
 import com.suman.blogz.utils.SortUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 @Service
 public class PostServiceImpl implements PostService {
+
+    @Value("${file.path}")
+    private String imagesPath;
+
+    @Value("${base.url}")
+    private String baseUrl;
 
     @Autowired
     private PostRepository postRepository;
@@ -42,6 +55,9 @@ public class PostServiceImpl implements PostService {
     private MyUserService myUserService;
 
     @Autowired
+    private FileService fileService;
+
+    @Autowired
     private ModelMapper modelMapper;
 
     @Autowired
@@ -50,6 +66,12 @@ public class PostServiceImpl implements PostService {
 
     private PostDto convertToPostDto(Posts post) {
         PostDto postDto = modelMapper.map(post, PostDto.class);
+        String imageName = post.getImage();
+        System.out.println("In PostServiceImpl, convertToPostDto method, imageName = " + imageName);
+        if(!imageName.isBlank()) {
+            postDto.setImageUrl(baseUrl + "/blogz/file/" + imageName);
+            System.out.println("postDto imageUrl = " + postDto.getImageUrl());
+        }
         Set<CommentResponse> commentResponses = genericMapper.mapSet(post.getComments(), CommentResponse.class);
         postDto.setCommentsForThisPost(commentResponses);
         return postDto;
@@ -74,9 +96,14 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public ApiResponse createPost(PostRequestData newPost, Integer userId, int categoryId) {
+    public ApiResponse createPost(MultipartFile image, PostRequestData postRequestData, Integer userId, int categoryId) throws IOException {
+        Posts post = modelMapper.map(postRequestData, Posts.class);
 
-        Posts post = modelMapper.map(newPost, Posts.class);
+        if(!postRequestData.getOriginalImageName().isBlank()) {
+            String imageName = fileService.uploadFile(imagesPath, image);
+            System.out.println("In PostServiceImpl, createPost method, savedImageName = " + imageName);
+            post.setImage(imageName);
+        }
 
         post.setPostDate(new Date());
         MyUser user = modelMapper.map(myUserService.getUserByIdForAdmin(userId), MyUser.class);
@@ -111,7 +138,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDto getPostById(Integer postId) {
         Posts postFromDb = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", postId));
-        return modelMapper.map(postFromDb, PostDto.class);
+        return convertToPostDto(postFromDb);
     }
 
     @Override

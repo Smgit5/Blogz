@@ -10,6 +10,14 @@ public class AppConstants {
     public static final String ROLE_ADMIN = "ADMIN";
     public static final String ROLE_USER = "USER";
     public static final String URL_ALL_POSTS = "/blogz/posts/show-posts/all";
+    public static final String[] PERMIT_ALL_URLS = {
+            "/blogz/register",
+            "/blogz/auth/login",
+            "/blogz/auth/refresh-token",
+            "/blogz/posts/show-posts/**",
+            "/blogz/posts/show-posts/search/**",
+            "/blogz/file/**"
+    };
     public static final Integer ACCESS_TOKEN_EXPIRATION = 3*60*1000;     // 3 minutes in millis
     public static final Integer REFRESH_TOKEN_EXPIRATION = 6*60*1000;  // 6 minutes in millis
 }
